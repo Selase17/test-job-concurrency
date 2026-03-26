@@ -1,4 +1,4 @@
-name: Concurrency Workflow
+name: Timeout Workflow
 
 on:
   push:
@@ -32,14 +32,16 @@ jobs:
   deploy:
     needs: docker
     concurrency:
-      group: production-deployment  
-      cancel-in-progress: false  
+      group: production-deployment
+      cancel-in-progress: true
     runs-on: ubuntu-latest
+    
     steps:
       - name: Docker Login
         run: docker login --username=${{ env.DOCKER_USERNAME }} --password-stdin <<< "${{ secrets.DOCKER_HUB_TOKEN }}"
       
       - name: Docker Run
-        run: |-
+        timeout-minutes: 1 
+        run: |
           docker run -d -p 8080:80 ${{ env.CONTAINER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
           sleep 300s 
