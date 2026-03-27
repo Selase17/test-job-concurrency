@@ -1,4 +1,3 @@
-
 name: Matrix Configuration
 
 on:
@@ -7,12 +6,16 @@ on:
 
 jobs: 
   deploy:
+    environment: prod
     strategy: 
       matrix: 
-        os: [ubuntu-latest, ubuntu-24.04, windows-latest] 
-        images: [hello-world, alpine] 
+        os: [ubuntu-latest, ubuntu-24.04, windows-latest]
+        images: [hello-world, alpine]
+        exclude:  
+          - images: alpine 
+            os: windows-latest 
 
-    runs-on: ${{ matrix.os }} 
+    runs-on: ${{ matrix.os }}
 
     steps: 
       - name: Echo Docker Details
